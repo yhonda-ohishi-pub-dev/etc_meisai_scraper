@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -111,6 +113,40 @@ func (s *DownloadServiceGRPC) GetAllAccountIDs(ctx context.Context, req *pb.GetA
 	return &pb.GetAllAccountIDsResponse{
 		AccountIds: accountIDs,
 	}, nil
+}
+
+// GetEnvironmentVariables は環境変数を取得（デバッグ用）
+func (s *DownloadServiceGRPC) GetEnvironmentVariables(ctx context.Context, req *pb.GetEnvironmentVariablesRequest) (*pb.GetEnvironmentVariablesResponse, error) {
+	return &pb.GetEnvironmentVariablesResponse{
+		EtcCorpAccounts:       maskAccountString(os.Getenv("ETC_CORP_ACCOUNTS")),
+		EtcHeadless:           os.Getenv("ETC_HEADLESS"),
+		GrpcPort:              os.Getenv("GRPC_PORT"),
+		HttpPort:              os.Getenv("HTTP_PORT"),
+		EtcCorporateAccounts:  maskAccountString(os.Getenv("ETC_CORPORATE_ACCOUNTS")),
+		EtcPersonalAccounts:   maskAccountString(os.Getenv("ETC_PERSONAL_ACCOUNTS")),
+	}, nil
+}
+
+// maskAccountString はアカウント文字列をマスク（パスワード部分を隠す）
+func maskAccountString(accountStr string) string {
+	if accountStr == "" {
+		return ""
+	}
+
+	accounts := strings.Split(accountStr, ",")
+	maskedAccounts := make([]string, len(accounts))
+
+	for i, account := range accounts {
+		parts := strings.Split(account, ":")
+		if len(parts) >= 2 {
+			// userid:******* の形式にマスク
+			maskedAccounts[i] = parts[0] + ":*******"
+		} else {
+			maskedAccounts[i] = account
+		}
+	}
+
+	return strings.Join(maskedAccounts, ",")
 }
 
 // setDefaultDates はデフォルトの日付を設定

@@ -19,6 +19,39 @@
     "application/json"
   ],
   "paths": {
+    "/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables": {
+      "post": {
+        "summary": "環境変数取得（デバッグ用）",
+        "operationId": "DownloadService_GetEnvironmentVariables",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetEnvironmentVariablesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetEnvironmentVariablesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DownloadService"
+        ]
+      }
+    },
     "/etc_meisai.download.v2.DownloadBufferService/DownloadAsBuffer": {
       "post": {
         "summary": "CSVデータをバイナリで直接返す",
@@ -398,6 +431,40 @@
         }
       },
       "title": "アカウントID取得レスポンス"
+    },
+    "v1GetEnvironmentVariablesRequest": {
+      "type": "object",
+      "title": "環境変数取得リクエスト"
+    },
+    "v1GetEnvironmentVariablesResponse": {
+      "type": "object",
+      "properties": {
+        "etc_corp_accounts": {
+          "type": "string",
+          "title": "ETC_CORP_ACCOUNTS (マスク済み)"
+        },
+        "etc_headless": {
+          "type": "string",
+          "title": "ETC_HEADLESS"
+        },
+        "grpc_port": {
+          "type": "string",
+          "title": "GRPC_PORT"
+        },
+        "http_port": {
+          "type": "string",
+          "title": "HTTP_PORT"
+        },
+        "etc_corporate_accounts": {
+          "type": "string",
+          "title": "ETC_CORPORATE_ACCOUNTS (レガシー、マスク済み)"
+        },
+        "etc_personal_accounts": {
+          "type": "string",
+          "title": "ETC_PERSONAL_ACCOUNTS (レガシー、マスク済み)"
+        }
+      },
+      "title": "環境変数取得レスポンス"
     },
     "v1JobStatus": {
       "type": "object",

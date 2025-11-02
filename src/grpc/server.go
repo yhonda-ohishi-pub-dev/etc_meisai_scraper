@@ -70,6 +70,7 @@ func (s *Server) Start(port string) error {
 	s.logger.Printf("    * DownloadAsync")
 	s.logger.Printf("    * GetJobStatus")
 	s.logger.Printf("    * GetAllAccountIDs")
+	s.logger.Printf("    * GetEnvironmentVariables")
 
 	return s.grpcServer.Serve(lis)
 }

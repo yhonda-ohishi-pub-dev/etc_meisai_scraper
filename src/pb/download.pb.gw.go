@@ -149,6 +149,33 @@ func local_request_DownloadService_GetAllAccountIDs_0(ctx context.Context, marsh
 	return msg, metadata, err
 }
 
+func request_DownloadService_GetEnvironmentVariables_0(ctx context.Context, marshaler runtime.Marshaler, client DownloadServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetEnvironmentVariablesRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.GetEnvironmentVariables(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_DownloadService_GetEnvironmentVariables_0(ctx context.Context, marshaler runtime.Marshaler, server DownloadServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetEnvironmentVariablesRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.GetEnvironmentVariables(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterDownloadServiceHandlerServer registers the http handlers for service DownloadService to "mux".
 // UnaryRPC     :call DownloadServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -234,6 +261,26 @@ func RegisterDownloadServiceHandlerServer(ctx context.Context, mux *runtime.Serv
 			return
 		}
 		forward_DownloadService_GetAllAccountIDs_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_DownloadService_GetEnvironmentVariables_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables", runtime.WithHTTPPathPattern("/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_DownloadService_GetEnvironmentVariables_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_DownloadService_GetEnvironmentVariables_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -343,19 +390,38 @@ func RegisterDownloadServiceHandlerClient(ctx context.Context, mux *runtime.Serv
 		}
 		forward_DownloadService_GetAllAccountIDs_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_DownloadService_GetEnvironmentVariables_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables", runtime.WithHTTPPathPattern("/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_DownloadService_GetEnvironmentVariables_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_DownloadService_GetEnvironmentVariables_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
 var (
-	pattern_DownloadService_DownloadSync_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"etc_meisai_scraper", "v1", "download", "sync"}, ""))
-	pattern_DownloadService_DownloadAsync_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"etc_meisai_scraper", "v1", "download", "async"}, ""))
-	pattern_DownloadService_GetJobStatus_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"etc_meisai_scraper", "v1", "download", "jobs", "job_id"}, ""))
-	pattern_DownloadService_GetAllAccountIDs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"etc_meisai_scraper", "v1", "accounts"}, ""))
+	pattern_DownloadService_DownloadSync_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"etc_meisai_scraper", "v1", "download", "sync"}, ""))
+	pattern_DownloadService_DownloadAsync_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"etc_meisai_scraper", "v1", "download", "async"}, ""))
+	pattern_DownloadService_GetJobStatus_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"etc_meisai_scraper", "v1", "download", "jobs", "job_id"}, ""))
+	pattern_DownloadService_GetAllAccountIDs_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"etc_meisai_scraper", "v1", "accounts"}, ""))
+	pattern_DownloadService_GetEnvironmentVariables_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"etc_meisai.download.v1.DownloadService", "GetEnvironmentVariables"}, ""))
 )
 
 var (
-	forward_DownloadService_DownloadSync_0     = runtime.ForwardResponseMessage
-	forward_DownloadService_DownloadAsync_0    = runtime.ForwardResponseMessage
-	forward_DownloadService_GetJobStatus_0     = runtime.ForwardResponseMessage
-	forward_DownloadService_GetAllAccountIDs_0 = runtime.ForwardResponseMessage
+	forward_DownloadService_DownloadSync_0            = runtime.ForwardResponseMessage
+	forward_DownloadService_DownloadAsync_0           = runtime.ForwardResponseMessage
+	forward_DownloadService_GetJobStatus_0            = runtime.ForwardResponseMessage
+	forward_DownloadService_GetAllAccountIDs_0        = runtime.ForwardResponseMessage
+	forward_DownloadService_GetEnvironmentVariables_0 = runtime.ForwardResponseMessage
 )

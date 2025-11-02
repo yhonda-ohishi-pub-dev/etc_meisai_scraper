@@ -19,6 +19,9 @@ service DownloadService {
 
   // 全アカウントID取得
   rpc GetAllAccountIDs(GetAllAccountIDsRequest) returns (GetAllAccountIDsResponse);
+
+  // 環境変数取得（デバッグ用）
+  rpc GetEnvironmentVariables(GetEnvironmentVariablesRequest) returns (GetEnvironmentVariablesResponse);
 }
 
 // ダウンロードリクエスト
@@ -67,6 +70,19 @@ message GetAllAccountIDsRequest {}
 // アカウントID取得レスポンス
 message GetAllAccountIDsResponse {
   repeated string account_ids = 1;
+}
+
+// 環境変数取得リクエスト
+message GetEnvironmentVariablesRequest {}
+
+// 環境変数取得レスポンス
+message GetEnvironmentVariablesResponse {
+  string etc_corp_accounts = 1;        // ETC_CORP_ACCOUNTS (マスク済み)
+  string etc_headless = 2;             // ETC_HEADLESS
+  string grpc_port = 3;                // GRPC_PORT
+  string http_port = 4;                // HTTP_PORT
+  string etc_corporate_accounts = 5;   // ETC_CORPORATE_ACCOUNTS (レガシー、マスク済み)
+  string etc_personal_accounts = 6;    // ETC_PERSONAL_ACCOUNTS (レガシー、マスク済み)
 }
 
 // ETC明細レコード

@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DownloadService_DownloadSync_FullMethodName     = "/etc_meisai.download.v1.DownloadService/DownloadSync"
-	DownloadService_DownloadAsync_FullMethodName    = "/etc_meisai.download.v1.DownloadService/DownloadAsync"
-	DownloadService_GetJobStatus_FullMethodName     = "/etc_meisai.download.v1.DownloadService/GetJobStatus"
-	DownloadService_GetAllAccountIDs_FullMethodName = "/etc_meisai.download.v1.DownloadService/GetAllAccountIDs"
+	DownloadService_DownloadSync_FullMethodName            = "/etc_meisai.download.v1.DownloadService/DownloadSync"
+	DownloadService_DownloadAsync_FullMethodName           = "/etc_meisai.download.v1.DownloadService/DownloadAsync"
+	DownloadService_GetJobStatus_FullMethodName            = "/etc_meisai.download.v1.DownloadService/GetJobStatus"
+	DownloadService_GetAllAccountIDs_FullMethodName        = "/etc_meisai.download.v1.DownloadService/GetAllAccountIDs"
+	DownloadService_GetEnvironmentVariables_FullMethodName = "/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables"
 )
 
 // DownloadServiceClient is the client API for DownloadService service.
@@ -39,6 +40,8 @@ type DownloadServiceClient interface {
 	GetJobStatus(ctx context.Context, in *GetJobStatusRequest, opts ...grpc.CallOption) (*JobStatus, error)
 	// 全アカウントID取得
 	GetAllAccountIDs(ctx context.Context, in *GetAllAccountIDsRequest, opts ...grpc.CallOption) (*GetAllAccountIDsResponse, error)
+	// 環境変数取得（デバッグ用）
+	GetEnvironmentVariables(ctx context.Context, in *GetEnvironmentVariablesRequest, opts ...grpc.CallOption) (*GetEnvironmentVariablesResponse, error)
 }
 
 type downloadServiceClient struct {
@@ -89,6 +92,16 @@ func (c *downloadServiceClient) GetAllAccountIDs(ctx context.Context, in *GetAll
 	return out, nil
 }
 
+func (c *downloadServiceClient) GetEnvironmentVariables(ctx context.Context, in *GetEnvironmentVariablesRequest, opts ...grpc.CallOption) (*GetEnvironmentVariablesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEnvironmentVariablesResponse)
+	err := c.cc.Invoke(ctx, DownloadService_GetEnvironmentVariables_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DownloadServiceServer is the server API for DownloadService service.
 // All implementations should embed UnimplementedDownloadServiceServer
 // for forward compatibility.
@@ -103,6 +116,8 @@ type DownloadServiceServer interface {
 	GetJobStatus(context.Context, *GetJobStatusRequest) (*JobStatus, error)
 	// 全アカウントID取得
 	GetAllAccountIDs(context.Context, *GetAllAccountIDsRequest) (*GetAllAccountIDsResponse, error)
+	// 環境変数取得（デバッグ用）
+	GetEnvironmentVariables(context.Context, *GetEnvironmentVariablesRequest) (*GetEnvironmentVariablesResponse, error)
 }
 
 // UnimplementedDownloadServiceServer should be embedded to have
@@ -123,6 +138,9 @@ func (UnimplementedDownloadServiceServer) GetJobStatus(context.Context, *GetJobS
 }
 func (UnimplementedDownloadServiceServer) GetAllAccountIDs(context.Context, *GetAllAccountIDsRequest) (*GetAllAccountIDsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllAccountIDs not implemented")
+}
+func (UnimplementedDownloadServiceServer) GetEnvironmentVariables(context.Context, *GetEnvironmentVariablesRequest) (*GetEnvironmentVariablesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironmentVariables not implemented")
 }
 func (UnimplementedDownloadServiceServer) testEmbeddedByValue() {}
 
@@ -216,6 +234,24 @@ func _DownloadService_GetAllAccountIDs_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DownloadService_GetEnvironmentVariables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEnvironmentVariablesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloadServiceServer).GetEnvironmentVariables(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DownloadService_GetEnvironmentVariables_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloadServiceServer).GetEnvironmentVariables(ctx, req.(*GetEnvironmentVariablesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DownloadService_ServiceDesc is the grpc.ServiceDesc for DownloadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -238,6 +274,10 @@ var DownloadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllAccountIDs",
 			Handler:    _DownloadService_GetAllAccountIDs_Handler,
+		},
+		{
+			MethodName: "GetEnvironmentVariables",
+			Handler:    _DownloadService_GetEnvironmentVariables_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
