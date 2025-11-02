@@ -125,8 +125,9 @@ func (s *DownloadServiceGRPC) DownloadAsync(ctx context.Context, req *pb.Downloa
 
 	accounts := req.Accounts
 	if len(accounts) == 0 {
-		// デフォルトで全アカウントを使用
-		accounts = s.downloadService.GetAllAccountIDs()
+		// デフォルトで全アカウントを使用（ID:パスワード形式）
+		// GetAllAccountsWithCredentials() を使用して完全な認証情報を取得
+		accounts = s.downloadService.GetAllAccountsWithCredentials()
 		if len(accounts) == 0 {
 			return &pb.DownloadJobResponse{
 				JobId:   "",

@@ -49,7 +49,8 @@
       "Bash(ls:*)",
       "Bash(go generate:*)",
       "Read(//c/**)",
-      "Bash(staticcheck:*)"
+      "Bash(staticcheck:*)",
+      "Bash(grpcurl:*)"
     ],
     "deny": [],
     "ask": []

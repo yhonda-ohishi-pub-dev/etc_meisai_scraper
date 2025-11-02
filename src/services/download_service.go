@@ -38,6 +38,7 @@ type DownloadJob struct {
 // DownloadServiceInterface はダウンロードサービスのインターフェース
 type DownloadServiceInterface interface {
 	GetAllAccountIDs() []string
+	GetAllAccountsWithCredentials() []string
 	ProcessAsync(jobID string, accounts []string, fromDate, toDate string)
 	GetJobStatus(jobID string) (*DownloadJob, bool)
 	SetLogCallback(callback func(string))
@@ -83,43 +84,40 @@ func parseAccountsString(accountsStr string) []string {
 	return accounts
 }
 
-// GetAllAccountIDs は設定されているすべてのアカウントIDを取得
-func (s *DownloadService) GetAllAccountIDs() []string {
-	var accountIDs []string
-
+// GetAllAccountsWithCredentials は設定されているすべてのアカウント情報（ID:パスワード形式）を取得
+func (s *DownloadService) GetAllAccountsWithCredentials() []string {
 	// ETC_CORP_ACCOUNTS (推奨) - JSON配列またはカンマ区切り文字列に対応
 	corpAccounts := os.Getenv("ETC_CORP_ACCOUNTS")
 	if corpAccounts != "" {
-		accounts := parseAccountsString(corpAccounts)
-		for _, accountStr := range accounts {
-			parts := strings.Split(strings.TrimSpace(accountStr), ":")
-			if len(parts) >= 1 {
-				accountIDs = append(accountIDs, parts[0])
-			}
-		}
-		return accountIDs
+		return parseAccountsString(corpAccounts)
 	}
 
 	// 後方互換性のため ETC_CORPORATE_ACCOUNTS と ETC_PERSONAL_ACCOUNTS もサポート
+	var allAccounts []string
+
 	corporateAccounts := os.Getenv("ETC_CORPORATE_ACCOUNTS")
 	if corporateAccounts != "" {
-		accounts := parseAccountsString(corporateAccounts)
-		for _, accountStr := range accounts {
-			parts := strings.Split(strings.TrimSpace(accountStr), ":")
-			if len(parts) >= 1 {
-				accountIDs = append(accountIDs, parts[0])
-			}
-		}
+		allAccounts = append(allAccounts, parseAccountsString(corporateAccounts)...)
 	}
 
 	personalAccounts := os.Getenv("ETC_PERSONAL_ACCOUNTS")
 	if personalAccounts != "" {
-		accounts := parseAccountsString(personalAccounts)
-		for _, accountStr := range accounts {
-			parts := strings.Split(strings.TrimSpace(accountStr), ":")
-			if len(parts) >= 1 {
-				accountIDs = append(accountIDs, parts[0])
-			}
+		allAccounts = append(allAccounts, parseAccountsString(personalAccounts)...)
+	}
+
+	return allAccounts
+}
+
+// GetAllAccountIDs は設定されているすべてのアカウントIDを取得
+func (s *DownloadService) GetAllAccountIDs() []string {
+	var accountIDs []string
+
+	// GetAllAccountsWithCredentials を使用して完全なアカウント情報を取得
+	accounts := s.GetAllAccountsWithCredentials()
+	for _, accountStr := range accounts {
+		parts := strings.Split(strings.TrimSpace(accountStr), ":")
+		if len(parts) >= 1 {
+			accountIDs = append(accountIDs, parts[0])
 		}
 	}
 
