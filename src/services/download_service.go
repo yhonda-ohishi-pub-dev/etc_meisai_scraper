@@ -59,7 +59,19 @@ func NewDownloadServiceWithFactory(db *sql.DB, logger *log.Logger, factory Scrap
 func (s *DownloadService) GetAllAccountIDs() []string {
 	var accountIDs []string
 
-	// 法人アカウント
+	// ETC_CORP_ACCOUNTS (推奨)
+	corpAccounts := os.Getenv("ETC_CORP_ACCOUNTS")
+	if corpAccounts != "" {
+		for _, accountStr := range strings.Split(corpAccounts, ",") {
+			parts := strings.Split(accountStr, ":")
+			if len(parts) >= 1 {
+				accountIDs = append(accountIDs, parts[0])
+			}
+		}
+		return accountIDs
+	}
+
+	// 後方互換性のため ETC_CORPORATE_ACCOUNTS と ETC_PERSONAL_ACCOUNTS もサポート
 	corporateAccounts := os.Getenv("ETC_CORPORATE_ACCOUNTS")
 	if corporateAccounts != "" {
 		for _, accountStr := range strings.Split(corporateAccounts, ",") {
@@ -70,7 +82,6 @@ func (s *DownloadService) GetAllAccountIDs() []string {
 		}
 	}
 
-	// 個人アカウント
 	personalAccounts := os.Getenv("ETC_PERSONAL_ACCOUNTS")
 	if personalAccounts != "" {
 		for _, accountStr := range strings.Split(personalAccounts, ",") {

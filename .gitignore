@@ -57,3 +57,4 @@ tests/mocks/mock_*.go
 third_party/
 
 # Note: src/pb/ is NOT ignored - these files are committed for desktop-server integration
+bash.exe.stackdump

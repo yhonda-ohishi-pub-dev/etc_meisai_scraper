@@ -125,13 +125,17 @@ db_service (Fiber):
 - **開発ガイチE*: [quickstart.md](specs/001-db-service-integration/quickstart.md)
 
 ## 環境変数
-- `ETC_CORPORATE_ACCOUNTS`: 法人アカウント（カンマ区切り）
-- `ETC_PERSONAL_ACCOUNTS`: 個人アカウント（カンマ区切り）
+- `ETC_CORP_ACCOUNTS`: アカウント情報（カンマ区切り）
+  - 形式: `userid1:password1,userid2:password2`
+  - 法人・個人の区別なく全アカウントを指定
 - `ETC_HEADLESS`: Headlessモード（デフォルト: true）
   - `true` または未設定: Headlessモード（ブラウザ非表示）
   - `false`: ブラウザ表示モード（デバッグ用）
-- `DATABASE_URL`: データベース接続URL（統合後）
-- `GRPC_SERVER_PORT`: gRPCサーバーポート（統合後）
+
+**レガシー環境変数**（後方互換性のため残存）:
+- `ETC_CORPORATE_ACCOUNTS`: 法人アカウント（カンマ区切り）
+- `ETC_PERSONAL_ACCOUNTS`: 個人アカウント（カンマ区切り）
+- 注: 現在のコードでは法人・個人の区別なく同じ処理を行うため、`ETC_CORP_ACCOUNTS`への統一を推奨
 
 ## チE�E��E�トコマンチE
 ```bash
@@ -140,10 +144,44 @@ go test ./tests/integration -v   # 統合テスチE
 ```
 
 ## ビルド！E�E��E�衁E
+
+### 開発ビルド
 ```bash
 go build -o etc_meisai
 ./etc_meisai
 ```
+
+### リリースビルド (Windows)
+
+Windowsバイナリのリリースビルドは、専用のビルドスクリプトを使用します。
+
+#### PowerShell版（推奨）
+```powershell
+# 最新のgit tagから自動的にバージョンを取得してビルド
+.\build-release.ps1
+
+# 特定のバージョンを指定してビルド
+.\build-release.ps1 -Version "v0.0.25"
+```
+
+#### Bash版（Git Bash/WSL）
+```bash
+# 最新のgit tagから自動的にバージョンを取得してビルド
+./build-release.sh
+
+# 特定のバージョンを指定してビルド
+./build-release.sh v0.0.25
+```
+
+**ビルド出力:**
+- バイナリ: `etc_meisai_scraper-{VERSION}-windows-amd64.exe`
+- アーカイブ: `etc_meisai_scraper-{VERSION}-windows-amd64.zip`
+  - バイナリ + README.md + CLAUDE.md を含む
+
+**ビルドオプション:**
+- 最適化ビルド (`-ldflags "-s -w"`) でバイナリサイズを削減
+- バージョン情報を埋め込み (`-X main.Version=...`)
+- CGO無効 (`CGO_ENABLED=0`) でポータブルなバイナリを生成
 
 ---
 *最終更新: 2025-10-18 | v0.0.23*
