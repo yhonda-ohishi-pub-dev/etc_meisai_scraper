@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,13 +18,77 @@ import (
 type DownloadServiceGRPC struct {
 	pb.UnimplementedDownloadServiceServer
 	downloadService DownloadServiceInterface
+	logBuffer       *LogBuffer
+}
+
+// LogBuffer はログを保持するリングバッファ
+type LogBuffer struct {
+	lines    []string
+	maxLines int
+	mu       sync.RWMutex
+}
+
+// NewLogBuffer creates a new log buffer
+func NewLogBuffer(maxLines int) *LogBuffer {
+	return &LogBuffer{
+		lines:    make([]string, 0, maxLines),
+		maxLines: maxLines,
+	}
+}
+
+// Add adds a log line to the buffer
+func (lb *LogBuffer) Add(line string) {
+	lb.mu.Lock()
+	defer lb.mu.Unlock()
+
+	lb.lines = append(lb.lines, line)
+	if len(lb.lines) > lb.maxLines {
+		lb.lines = lb.lines[1:]
+	}
+}
+
+// GetTail returns the last N lines
+func (lb *LogBuffer) GetTail(n int) []string {
+	lb.mu.RLock()
+	defer lb.mu.RUnlock()
+
+	if n <= 0 || n > len(lb.lines) {
+		n = len(lb.lines)
+	}
+
+	start := len(lb.lines) - n
+	if start < 0 {
+		start = 0
+	}
+
+	result := make([]string, n)
+	copy(result, lb.lines[start:])
+	return result
+}
+
+// GetAll returns all lines
+func (lb *LogBuffer) GetAll() []string {
+	lb.mu.RLock()
+	defer lb.mu.RUnlock()
+
+	result := make([]string, len(lb.lines))
+	copy(result, lb.lines)
+	return result
 }
 
 // NewDownloadServiceGRPC creates a new gRPC download service
 func NewDownloadServiceGRPC(db *sql.DB, logger *log.Logger) *DownloadServiceGRPC {
-	return &DownloadServiceGRPC{
+	grpcService := &DownloadServiceGRPC{
 		downloadService: NewDownloadService(db, logger),
+		logBuffer:       NewLogBuffer(1000), // 最大1000行保持
 	}
+
+	// ログコールバックを設定
+	grpcService.downloadService.SetLogCallback(func(msg string) {
+		grpcService.logBuffer.Add(msg)
+	})
+
+	return grpcService
 }
 
 // NewDownloadServiceGRPCWithMock creates a new gRPC download service with a custom download service
@@ -125,6 +190,33 @@ func (s *DownloadServiceGRPC) GetEnvironmentVariables(ctx context.Context, req *
 		EtcCorporateAccounts:  maskAccountString(os.Getenv("ETC_CORPORATE_ACCOUNTS")),
 		EtcPersonalAccounts:   maskAccountString(os.Getenv("ETC_PERSONAL_ACCOUNTS")),
 	}, nil
+}
+
+// GetServerLogs はサーバーログを取得（デバッグ用）
+func (s *DownloadServiceGRPC) GetServerLogs(ctx context.Context, req *pb.GetServerLogsRequest) (*pb.GetServerLogsResponse, error) {
+	tailLines := int(req.TailLines)
+	if tailLines <= 0 {
+		tailLines = 100 // デフォルト100行
+	}
+
+	var logLines []string
+	if s.logBuffer != nil {
+		logLines = s.logBuffer.GetTail(tailLines)
+	} else {
+		logLines = []string{"Log buffer not initialized"}
+	}
+
+	return &pb.GetServerLogsResponse{
+		LogLines:   logLines,
+		TotalLines: int32(len(logLines)),
+	}, nil
+}
+
+// LogMessage はログメッセージをバッファに追加（外部から呼び出し可能）
+func (s *DownloadServiceGRPC) LogMessage(message string) {
+	if s.logBuffer != nil {
+		s.logBuffer.Add(message)
+	}
 }
 
 // maskAccountString はアカウント文字列をマスク（パスワード部分を隠す）

@@ -20,6 +20,7 @@ type DownloadService struct {
 	jobs           map[string]*DownloadJob
 	jobMutex       sync.RWMutex
 	scraperFactory ScraperFactory
+	logCallback    func(string) // ログコールバック関数
 }
 
 // DownloadJob はダウンロードジョブの状態
@@ -38,6 +39,7 @@ type DownloadServiceInterface interface {
 	GetAllAccountIDs() []string
 	ProcessAsync(jobID string, accounts []string, fromDate, toDate string)
 	GetJobStatus(jobID string) (*DownloadJob, bool)
+	SetLogCallback(callback func(string))
 }
 
 // NewDownloadService creates a new download service
@@ -118,10 +120,8 @@ func (s *DownloadService) ProcessAsync(jobID string, accounts []string, fromDate
 			}
 		}()
 
-		if s.logger != nil {
-			s.logger.Printf("Starting download job %s for %d accounts from %s to %s",
-				jobID, len(accounts), fromDate, toDate)
-		}
+		s.logMessage("Starting download job %s for %d accounts from %s to %s",
+			jobID, len(accounts), fromDate, toDate)
 
 		// Create a shared session folder for all accounts in this job
 		sessionFolder := fmt.Sprintf("./downloads/%s", time.Now().Format("20060102_150405"))
@@ -135,9 +135,7 @@ func (s *DownloadService) ProcessAsync(jobID string, accounts []string, fromDate
 
 			// 実際のダウンロード処理（セッションフォルダを渡す）
 			if err := s.downloadAccountData(account, fromDate, toDate, sessionFolder); err != nil {
-				if s.logger != nil {
-					s.logger.Printf("Error downloading data for account %s: %v", account, err)
-				}
+				s.logMessage("Error downloading data for account %s: %v", account, err)
 				// エラーがあってもほかのアカウントの処理は続ける
 			}
 
@@ -155,9 +153,7 @@ func (s *DownloadService) ProcessAsync(jobID string, accounts []string, fromDate
 		}
 		s.jobMutex.Unlock()
 
-		if s.logger != nil {
-			s.logger.Printf("Completed download job %s", jobID)
-		}
+		s.logMessage("Completed download job %s", jobID)
 	}()
 }
 
@@ -206,9 +202,7 @@ func (s *DownloadService) downloadAccountData(accountID, fromDate, toDate, sessi
 		return fmt.Errorf("download failed for account %s: %w", userID, err)
 	}
 
-	if s.logger != nil {
-		s.logger.Printf("Successfully downloaded data for account %s: %s", userID, csvPath)
-	}
+	s.logMessage("Successfully downloaded data for account %s: %s", userID, csvPath)
 
 	// TODO: CSVファイルをパースしてDBに保存
 
@@ -287,4 +281,20 @@ func GetHeadlessMode() bool {
 // getHeadlessMode は後方互換性のため維持（非推奨）
 func getHeadlessMode() bool {
 	return GetHeadlessMode()
+}
+
+// SetLogCallback はログコールバック関数を設定
+func (s *DownloadService) SetLogCallback(callback func(string)) {
+	s.logCallback = callback
+}
+
+// logMessage はログメッセージを記録
+func (s *DownloadService) logMessage(format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	if s.logger != nil {
+		s.logger.Println(msg)
+	}
+	if s.logCallback != nil {
+		s.logCallback(msg)
+	}
 }

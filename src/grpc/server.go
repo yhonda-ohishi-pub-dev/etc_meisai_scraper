@@ -71,6 +71,10 @@ func (s *Server) Start(port string) error {
 	s.logger.Printf("    * GetJobStatus")
 	s.logger.Printf("    * GetAllAccountIDs")
 	s.logger.Printf("    * GetEnvironmentVariables")
+	s.logger.Printf("    * GetServerLogs")
+
+	// ログバッファにサーバー起動メッセージを追加
+	s.downloadService.LogMessage(fmt.Sprintf("Starting gRPC server on port %s", port))
 
 	return s.grpcServer.Serve(lis)
 }

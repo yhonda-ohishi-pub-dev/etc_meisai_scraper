@@ -52,6 +52,39 @@
         ]
       }
     },
+    "/etc_meisai.download.v1.DownloadService/GetServerLogs": {
+      "post": {
+        "summary": "サーバーログ取得（デバッグ用）",
+        "operationId": "DownloadService_GetServerLogs",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetServerLogsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1GetServerLogsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DownloadService"
+        ]
+      }
+    },
     "/etc_meisai.download.v2.DownloadBufferService/DownloadAsBuffer": {
       "post": {
         "summary": "CSVデータをバイナリで直接返す",
@@ -465,6 +498,35 @@
         }
       },
       "title": "環境変数取得レスポンス"
+    },
+    "v1GetServerLogsRequest": {
+      "type": "object",
+      "properties": {
+        "tail_lines": {
+          "type": "integer",
+          "format": "int32",
+          "title": "末尾から取得する行数（デフォルト: 100）"
+        }
+      },
+      "title": "サーバーログ取得リクエスト"
+    },
+    "v1GetServerLogsResponse": {
+      "type": "object",
+      "properties": {
+        "log_lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ログ行の配列"
+        },
+        "total_lines": {
+          "type": "integer",
+          "format": "int32",
+          "title": "総行数"
+        }
+      },
+      "title": "サーバーログ取得レスポンス"
     },
     "v1JobStatus": {
       "type": "object",

@@ -24,6 +24,7 @@ const (
 	DownloadService_GetJobStatus_FullMethodName            = "/etc_meisai.download.v1.DownloadService/GetJobStatus"
 	DownloadService_GetAllAccountIDs_FullMethodName        = "/etc_meisai.download.v1.DownloadService/GetAllAccountIDs"
 	DownloadService_GetEnvironmentVariables_FullMethodName = "/etc_meisai.download.v1.DownloadService/GetEnvironmentVariables"
+	DownloadService_GetServerLogs_FullMethodName           = "/etc_meisai.download.v1.DownloadService/GetServerLogs"
 )
 
 // DownloadServiceClient is the client API for DownloadService service.
@@ -42,6 +43,8 @@ type DownloadServiceClient interface {
 	GetAllAccountIDs(ctx context.Context, in *GetAllAccountIDsRequest, opts ...grpc.CallOption) (*GetAllAccountIDsResponse, error)
 	// 環境変数取得（デバッグ用）
 	GetEnvironmentVariables(ctx context.Context, in *GetEnvironmentVariablesRequest, opts ...grpc.CallOption) (*GetEnvironmentVariablesResponse, error)
+	// サーバーログ取得（デバッグ用）
+	GetServerLogs(ctx context.Context, in *GetServerLogsRequest, opts ...grpc.CallOption) (*GetServerLogsResponse, error)
 }
 
 type downloadServiceClient struct {
@@ -102,6 +105,16 @@ func (c *downloadServiceClient) GetEnvironmentVariables(ctx context.Context, in 
 	return out, nil
 }
 
+func (c *downloadServiceClient) GetServerLogs(ctx context.Context, in *GetServerLogsRequest, opts ...grpc.CallOption) (*GetServerLogsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetServerLogsResponse)
+	err := c.cc.Invoke(ctx, DownloadService_GetServerLogs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DownloadServiceServer is the server API for DownloadService service.
 // All implementations should embed UnimplementedDownloadServiceServer
 // for forward compatibility.
@@ -118,6 +131,8 @@ type DownloadServiceServer interface {
 	GetAllAccountIDs(context.Context, *GetAllAccountIDsRequest) (*GetAllAccountIDsResponse, error)
 	// 環境変数取得（デバッグ用）
 	GetEnvironmentVariables(context.Context, *GetEnvironmentVariablesRequest) (*GetEnvironmentVariablesResponse, error)
+	// サーバーログ取得（デバッグ用）
+	GetServerLogs(context.Context, *GetServerLogsRequest) (*GetServerLogsResponse, error)
 }
 
 // UnimplementedDownloadServiceServer should be embedded to have
@@ -141,6 +156,9 @@ func (UnimplementedDownloadServiceServer) GetAllAccountIDs(context.Context, *Get
 }
 func (UnimplementedDownloadServiceServer) GetEnvironmentVariables(context.Context, *GetEnvironmentVariablesRequest) (*GetEnvironmentVariablesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironmentVariables not implemented")
+}
+func (UnimplementedDownloadServiceServer) GetServerLogs(context.Context, *GetServerLogsRequest) (*GetServerLogsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetServerLogs not implemented")
 }
 func (UnimplementedDownloadServiceServer) testEmbeddedByValue() {}
 
@@ -252,6 +270,24 @@ func _DownloadService_GetEnvironmentVariables_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DownloadService_GetServerLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetServerLogsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DownloadServiceServer).GetServerLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DownloadService_GetServerLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DownloadServiceServer).GetServerLogs(ctx, req.(*GetServerLogsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DownloadService_ServiceDesc is the grpc.ServiceDesc for DownloadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +314,10 @@ var DownloadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEnvironmentVariables",
 			Handler:    _DownloadService_GetEnvironmentVariables_Handler,
+		},
+		{
+			MethodName: "GetServerLogs",
+			Handler:    _DownloadService_GetServerLogs_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

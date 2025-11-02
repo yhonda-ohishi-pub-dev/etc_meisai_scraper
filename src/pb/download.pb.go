@@ -571,6 +571,104 @@ func (x *GetEnvironmentVariablesResponse) GetEtcPersonalAccounts() string {
 	return ""
 }
 
+// サーバーログ取得リクエスト
+type GetServerLogsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TailLines     int32                  `protobuf:"varint,1,opt,name=tail_lines,json=tailLines,proto3" json:"tail_lines,omitempty"` // 末尾から取得する行数（デフォルト: 100）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetServerLogsRequest) Reset() {
+	*x = GetServerLogsRequest{}
+	mi := &file_download_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServerLogsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServerLogsRequest) ProtoMessage() {}
+
+func (x *GetServerLogsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_download_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServerLogsRequest.ProtoReflect.Descriptor instead.
+func (*GetServerLogsRequest) Descriptor() ([]byte, []int) {
+	return file_download_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetServerLogsRequest) GetTailLines() int32 {
+	if x != nil {
+		return x.TailLines
+	}
+	return 0
+}
+
+// サーバーログ取得レスポンス
+type GetServerLogsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	LogLines      []string               `protobuf:"bytes,1,rep,name=log_lines,json=logLines,proto3" json:"log_lines,omitempty"`        // ログ行の配列
+	TotalLines    int32                  `protobuf:"varint,2,opt,name=total_lines,json=totalLines,proto3" json:"total_lines,omitempty"` // 総行数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetServerLogsResponse) Reset() {
+	*x = GetServerLogsResponse{}
+	mi := &file_download_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetServerLogsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetServerLogsResponse) ProtoMessage() {}
+
+func (x *GetServerLogsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_download_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetServerLogsResponse.ProtoReflect.Descriptor instead.
+func (*GetServerLogsResponse) Descriptor() ([]byte, []int) {
+	return file_download_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetServerLogsResponse) GetLogLines() []string {
+	if x != nil {
+		return x.LogLines
+	}
+	return nil
+}
+
+func (x *GetServerLogsResponse) GetTotalLines() int32 {
+	if x != nil {
+		return x.TotalLines
+	}
+	return 0
+}
+
 // ETC明細レコード
 type ETCMeisaiRecord struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -592,7 +690,7 @@ type ETCMeisaiRecord struct {
 
 func (x *ETCMeisaiRecord) Reset() {
 	*x = ETCMeisaiRecord{}
-	mi := &file_download_proto_msgTypes[9]
+	mi := &file_download_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -604,7 +702,7 @@ func (x *ETCMeisaiRecord) String() string {
 func (*ETCMeisaiRecord) ProtoMessage() {}
 
 func (x *ETCMeisaiRecord) ProtoReflect() protoreflect.Message {
-	mi := &file_download_proto_msgTypes[9]
+	mi := &file_download_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -617,7 +715,7 @@ func (x *ETCMeisaiRecord) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ETCMeisaiRecord.ProtoReflect.Descriptor instead.
 func (*ETCMeisaiRecord) Descriptor() ([]byte, []int) {
-	return file_download_proto_rawDescGZIP(), []int{9}
+	return file_download_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ETCMeisaiRecord) GetId() int64 {
@@ -746,7 +844,14 @@ const file_download_proto_rawDesc = "" +
 	"\tgrpc_port\x18\x03 \x01(\tR\bgrpcPort\x12\x1b\n" +
 	"\thttp_port\x18\x04 \x01(\tR\bhttpPort\x124\n" +
 	"\x16etc_corporate_accounts\x18\x05 \x01(\tR\x14etcCorporateAccounts\x122\n" +
-	"\x15etc_personal_accounts\x18\x06 \x01(\tR\x13etcPersonalAccounts\"\xf1\x03\n" +
+	"\x15etc_personal_accounts\x18\x06 \x01(\tR\x13etcPersonalAccounts\"5\n" +
+	"\x14GetServerLogsRequest\x12\x1d\n" +
+	"\n" +
+	"tail_lines\x18\x01 \x01(\x05R\ttailLines\"U\n" +
+	"\x15GetServerLogsResponse\x12\x1b\n" +
+	"\tlog_lines\x18\x01 \x03(\tR\blogLines\x12\x1f\n" +
+	"\vtotal_lines\x18\x02 \x01(\x05R\n" +
+	"totalLines\"\xf1\x03\n" +
 	"\x0fETCMeisaiRecord\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
@@ -764,13 +869,14 @@ const file_download_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xbf\x04\n" +
+	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt2\xad\x05\n" +
 	"\x0fDownloadService\x12a\n" +
 	"\fDownloadSync\x12'.etc_meisai.download.v1.DownloadRequest\x1a(.etc_meisai.download.v1.DownloadResponse\x12e\n" +
 	"\rDownloadAsync\x12'.etc_meisai.download.v1.DownloadRequest\x1a+.etc_meisai.download.v1.DownloadJobResponse\x12^\n" +
 	"\fGetJobStatus\x12+.etc_meisai.download.v1.GetJobStatusRequest\x1a!.etc_meisai.download.v1.JobStatus\x12u\n" +
 	"\x10GetAllAccountIDs\x12/.etc_meisai.download.v1.GetAllAccountIDsRequest\x1a0.etc_meisai.download.v1.GetAllAccountIDsResponse\x12\x8a\x01\n" +
-	"\x17GetEnvironmentVariables\x126.etc_meisai.download.v1.GetEnvironmentVariablesRequest\x1a7.etc_meisai.download.v1.GetEnvironmentVariablesResponseB<Z:github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pbb\x06proto3"
+	"\x17GetEnvironmentVariables\x126.etc_meisai.download.v1.GetEnvironmentVariablesRequest\x1a7.etc_meisai.download.v1.GetEnvironmentVariablesResponse\x12l\n" +
+	"\rGetServerLogs\x12,.etc_meisai.download.v1.GetServerLogsRequest\x1a-.etc_meisai.download.v1.GetServerLogsResponseB<Z:github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pbb\x06proto3"
 
 var (
 	file_download_proto_rawDescOnce sync.Once
@@ -784,7 +890,7 @@ func file_download_proto_rawDescGZIP() []byte {
 	return file_download_proto_rawDescData
 }
 
-var file_download_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_download_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_download_proto_goTypes = []any{
 	(*DownloadRequest)(nil),                 // 0: etc_meisai.download.v1.DownloadRequest
 	(*DownloadResponse)(nil),                // 1: etc_meisai.download.v1.DownloadResponse
@@ -795,29 +901,33 @@ var file_download_proto_goTypes = []any{
 	(*GetAllAccountIDsResponse)(nil),        // 6: etc_meisai.download.v1.GetAllAccountIDsResponse
 	(*GetEnvironmentVariablesRequest)(nil),  // 7: etc_meisai.download.v1.GetEnvironmentVariablesRequest
 	(*GetEnvironmentVariablesResponse)(nil), // 8: etc_meisai.download.v1.GetEnvironmentVariablesResponse
-	(*ETCMeisaiRecord)(nil),                 // 9: etc_meisai.download.v1.ETCMeisaiRecord
-	(*timestamppb.Timestamp)(nil),           // 10: google.protobuf.Timestamp
+	(*GetServerLogsRequest)(nil),            // 9: etc_meisai.download.v1.GetServerLogsRequest
+	(*GetServerLogsResponse)(nil),           // 10: etc_meisai.download.v1.GetServerLogsResponse
+	(*ETCMeisaiRecord)(nil),                 // 11: etc_meisai.download.v1.ETCMeisaiRecord
+	(*timestamppb.Timestamp)(nil),           // 12: google.protobuf.Timestamp
 }
 var file_download_proto_depIdxs = []int32{
-	9,  // 0: etc_meisai.download.v1.DownloadResponse.records:type_name -> etc_meisai.download.v1.ETCMeisaiRecord
-	10, // 1: etc_meisai.download.v1.JobStatus.started_at:type_name -> google.protobuf.Timestamp
-	10, // 2: etc_meisai.download.v1.JobStatus.completed_at:type_name -> google.protobuf.Timestamp
-	10, // 3: etc_meisai.download.v1.ETCMeisaiRecord.usage_date:type_name -> google.protobuf.Timestamp
-	10, // 4: etc_meisai.download.v1.ETCMeisaiRecord.downloaded_at:type_name -> google.protobuf.Timestamp
-	10, // 5: etc_meisai.download.v1.ETCMeisaiRecord.created_at:type_name -> google.protobuf.Timestamp
-	10, // 6: etc_meisai.download.v1.ETCMeisaiRecord.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 0: etc_meisai.download.v1.DownloadResponse.records:type_name -> etc_meisai.download.v1.ETCMeisaiRecord
+	12, // 1: etc_meisai.download.v1.JobStatus.started_at:type_name -> google.protobuf.Timestamp
+	12, // 2: etc_meisai.download.v1.JobStatus.completed_at:type_name -> google.protobuf.Timestamp
+	12, // 3: etc_meisai.download.v1.ETCMeisaiRecord.usage_date:type_name -> google.protobuf.Timestamp
+	12, // 4: etc_meisai.download.v1.ETCMeisaiRecord.downloaded_at:type_name -> google.protobuf.Timestamp
+	12, // 5: etc_meisai.download.v1.ETCMeisaiRecord.created_at:type_name -> google.protobuf.Timestamp
+	12, // 6: etc_meisai.download.v1.ETCMeisaiRecord.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 7: etc_meisai.download.v1.DownloadService.DownloadSync:input_type -> etc_meisai.download.v1.DownloadRequest
 	0,  // 8: etc_meisai.download.v1.DownloadService.DownloadAsync:input_type -> etc_meisai.download.v1.DownloadRequest
 	3,  // 9: etc_meisai.download.v1.DownloadService.GetJobStatus:input_type -> etc_meisai.download.v1.GetJobStatusRequest
 	5,  // 10: etc_meisai.download.v1.DownloadService.GetAllAccountIDs:input_type -> etc_meisai.download.v1.GetAllAccountIDsRequest
 	7,  // 11: etc_meisai.download.v1.DownloadService.GetEnvironmentVariables:input_type -> etc_meisai.download.v1.GetEnvironmentVariablesRequest
-	1,  // 12: etc_meisai.download.v1.DownloadService.DownloadSync:output_type -> etc_meisai.download.v1.DownloadResponse
-	2,  // 13: etc_meisai.download.v1.DownloadService.DownloadAsync:output_type -> etc_meisai.download.v1.DownloadJobResponse
-	4,  // 14: etc_meisai.download.v1.DownloadService.GetJobStatus:output_type -> etc_meisai.download.v1.JobStatus
-	6,  // 15: etc_meisai.download.v1.DownloadService.GetAllAccountIDs:output_type -> etc_meisai.download.v1.GetAllAccountIDsResponse
-	8,  // 16: etc_meisai.download.v1.DownloadService.GetEnvironmentVariables:output_type -> etc_meisai.download.v1.GetEnvironmentVariablesResponse
-	12, // [12:17] is the sub-list for method output_type
-	7,  // [7:12] is the sub-list for method input_type
+	9,  // 12: etc_meisai.download.v1.DownloadService.GetServerLogs:input_type -> etc_meisai.download.v1.GetServerLogsRequest
+	1,  // 13: etc_meisai.download.v1.DownloadService.DownloadSync:output_type -> etc_meisai.download.v1.DownloadResponse
+	2,  // 14: etc_meisai.download.v1.DownloadService.DownloadAsync:output_type -> etc_meisai.download.v1.DownloadJobResponse
+	4,  // 15: etc_meisai.download.v1.DownloadService.GetJobStatus:output_type -> etc_meisai.download.v1.JobStatus
+	6,  // 16: etc_meisai.download.v1.DownloadService.GetAllAccountIDs:output_type -> etc_meisai.download.v1.GetAllAccountIDsResponse
+	8,  // 17: etc_meisai.download.v1.DownloadService.GetEnvironmentVariables:output_type -> etc_meisai.download.v1.GetEnvironmentVariablesResponse
+	10, // 18: etc_meisai.download.v1.DownloadService.GetServerLogs:output_type -> etc_meisai.download.v1.GetServerLogsResponse
+	13, // [13:19] is the sub-list for method output_type
+	7,  // [7:13] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -834,7 +944,7 @@ func file_download_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_download_proto_rawDesc), len(file_download_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

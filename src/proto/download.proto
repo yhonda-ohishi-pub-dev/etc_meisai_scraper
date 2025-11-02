@@ -22,6 +22,9 @@ service DownloadService {
 
   // 環境変数取得（デバッグ用）
   rpc GetEnvironmentVariables(GetEnvironmentVariablesRequest) returns (GetEnvironmentVariablesResponse);
+
+  // サーバーログ取得（デバッグ用）
+  rpc GetServerLogs(GetServerLogsRequest) returns (GetServerLogsResponse);
 }
 
 // ダウンロードリクエスト
@@ -83,6 +86,17 @@ message GetEnvironmentVariablesResponse {
   string http_port = 4;                // HTTP_PORT
   string etc_corporate_accounts = 5;   // ETC_CORPORATE_ACCOUNTS (レガシー、マスク済み)
   string etc_personal_accounts = 6;    // ETC_PERSONAL_ACCOUNTS (レガシー、マスク済み)
+}
+
+// サーバーログ取得リクエスト
+message GetServerLogsRequest {
+  int32 tail_lines = 1;  // 末尾から取得する行数（デフォルト: 100）
+}
+
+// サーバーログ取得レスポンス
+message GetServerLogsResponse {
+  repeated string log_lines = 1;  // ログ行の配列
+  int32 total_lines = 2;          // 総行数
 }
 
 // ETC明細レコード
