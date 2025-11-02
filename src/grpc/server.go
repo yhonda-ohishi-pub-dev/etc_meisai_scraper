@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	reflector "github.com/yhonda-ohishi-pub-dev/grpc-service-reflector"
 	pb "github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pb"
 	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/services"
 	"google.golang.org/grpc"
@@ -64,14 +65,15 @@ func (s *Server) Start(port string) error {
 
 	s.logger.Printf("Starting gRPC server on port %s", port)
 	s.logger.Printf("GitHub repository: https://github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper")
+
+	// Use grpc-service-reflector to automatically list all services and methods
 	s.logger.Printf("Available gRPC services:")
-	s.logger.Printf("  - DownloadService")
-	s.logger.Printf("    * DownloadSync")
-	s.logger.Printf("    * DownloadAsync")
-	s.logger.Printf("    * GetJobStatus")
-	s.logger.Printf("    * GetAllAccountIDs")
-	s.logger.Printf("    * GetEnvironmentVariables")
-	s.logger.Printf("    * GetServerLogs")
+	if services, err := reflector.GetServices(s.grpcServer); err == nil {
+		formattedServices := reflector.FormatServices(services)
+		s.logger.Print(formattedServices)
+	} else {
+		s.logger.Printf("  Warning: Failed to reflect services: %v", err)
+	}
 
 	// ログバッファにサーバー起動メッセージを追加
 	s.downloadService.LogMessage(fmt.Sprintf("Starting gRPC server on port %s", port))
