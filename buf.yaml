@@ -1,7 +1,7 @@
 version: v2
 modules:
   - path: src/proto
-    name: buf.build/yhonda-ohishi/etc-meisai-scraper
+    name: buf.build/yhonda-ohishi-pub-dev/etc-meisai-scraper
 lint:
   use:
     - STANDARD

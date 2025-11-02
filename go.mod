@@ -1,4 +1,4 @@
-module github.com/yhonda-ohishi/etc_meisai_scraper
+module github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper
 
 go 1.24.0
 

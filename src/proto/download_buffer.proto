@@ -4,7 +4,7 @@ package etc_meisai.download.v2;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/yhonda-ohishi/etc_meisai_scraper/src/pb";
+option go_package = "github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pb";
 
 // バッファベースのダウンロードサービス
 service DownloadBufferService {

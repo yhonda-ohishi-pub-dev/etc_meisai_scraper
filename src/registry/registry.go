@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log"
 
-	pb "github.com/yhonda-ohishi/etc_meisai_scraper/src/pb"
-	"github.com/yhonda-ohishi/etc_meisai_scraper/src/services"
+	pb "github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pb"
+	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/services"
 	"google.golang.org/grpc"
 )
 

@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/yhonda-ohishi/etc_meisai_scraper/src/grpc"
-	"github.com/yhonda-ohishi/etc_meisai_scraper/src/handlers"
-	"github.com/yhonda-ohishi/etc_meisai_scraper/src/services"
+	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/grpc"
+	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/handlers"
+	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/services"
 )
 
 func main() {
@@ -100,7 +100,7 @@ func runHTTPServer(db *sql.DB, logger *log.Logger, port string) {
 	http.HandleFunc("/api/download/status", downloadHandler.GetDownloadStatus)
 
 	logger.Printf("Starting HTTP server on port %s", port)
-	logger.Printf("GitHub repository: https://github.com/yhonda-ohishi/etc_meisai_scraper")
+	logger.Printf("GitHub repository: https://github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper")
 	logger.Printf("Download endpoints:")
 	logger.Printf("  POST /api/download/sync  - 同期ダウンロード")
 	logger.Printf("  POST /api/download/async - 非同期ダウンロード")

@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	pb "github.com/yhonda-ohishi/etc_meisai_scraper/src/pb"
-	"github.com/yhonda-ohishi/etc_meisai_scraper/src/services"
+	pb "github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pb"
+	"github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -63,7 +63,7 @@ func (s *Server) Start(port string) error {
 	}
 
 	s.logger.Printf("Starting gRPC server on port %s", port)
-	s.logger.Printf("GitHub repository: https://github.com/yhonda-ohishi/etc_meisai_scraper")
+	s.logger.Printf("GitHub repository: https://github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper")
 	s.logger.Printf("Available gRPC services:")
 	s.logger.Printf("  - DownloadService")
 	s.logger.Printf("    * DownloadSync")

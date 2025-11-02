@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	pb "github.com/yhonda-ohishi/etc_meisai_scraper/src/pb"
+	pb "github.com/yhonda-ohishi-pub-dev/etc_meisai_scraper/src/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
