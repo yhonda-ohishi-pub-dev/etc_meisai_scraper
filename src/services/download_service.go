@@ -2,6 +2,7 @@ package services
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -57,15 +58,41 @@ func NewDownloadServiceWithFactory(db *sql.DB, logger *log.Logger, factory Scrap
 	}
 }
 
+// parseAccountsString はアカウント文字列をパース（JSON配列またはカンマ区切り文字列に対応）
+func parseAccountsString(accountsStr string) []string {
+	if accountsStr == "" {
+		return nil
+	}
+
+	var accounts []string
+
+	// JSON配列形式かチェック（desktop-server形式: ["user1:pass1","user2:pass2"]）
+	if strings.HasPrefix(strings.TrimSpace(accountsStr), "[") {
+		var jsonAccounts []string
+		if err := json.Unmarshal([]byte(accountsStr), &jsonAccounts); err == nil {
+			accounts = jsonAccounts
+		} else {
+			// JSONパースエラーの場合はカンマ区切りとして扱う
+			accounts = strings.Split(accountsStr, ",")
+		}
+	} else {
+		// カンマ区切り文字列形式（従来形式: "user1:pass1,user2:pass2"）
+		accounts = strings.Split(accountsStr, ",")
+	}
+
+	return accounts
+}
+
 // GetAllAccountIDs は設定されているすべてのアカウントIDを取得
 func (s *DownloadService) GetAllAccountIDs() []string {
 	var accountIDs []string
 
-	// ETC_CORP_ACCOUNTS (推奨)
+	// ETC_CORP_ACCOUNTS (推奨) - JSON配列またはカンマ区切り文字列に対応
 	corpAccounts := os.Getenv("ETC_CORP_ACCOUNTS")
 	if corpAccounts != "" {
-		for _, accountStr := range strings.Split(corpAccounts, ",") {
-			parts := strings.Split(accountStr, ":")
+		accounts := parseAccountsString(corpAccounts)
+		for _, accountStr := range accounts {
+			parts := strings.Split(strings.TrimSpace(accountStr), ":")
 			if len(parts) >= 1 {
 				accountIDs = append(accountIDs, parts[0])
 			}
@@ -76,8 +103,9 @@ func (s *DownloadService) GetAllAccountIDs() []string {
 	// 後方互換性のため ETC_CORPORATE_ACCOUNTS と ETC_PERSONAL_ACCOUNTS もサポート
 	corporateAccounts := os.Getenv("ETC_CORPORATE_ACCOUNTS")
 	if corporateAccounts != "" {
-		for _, accountStr := range strings.Split(corporateAccounts, ",") {
-			parts := strings.Split(accountStr, ":")
+		accounts := parseAccountsString(corporateAccounts)
+		for _, accountStr := range accounts {
+			parts := strings.Split(strings.TrimSpace(accountStr), ":")
 			if len(parts) >= 1 {
 				accountIDs = append(accountIDs, parts[0])
 			}
@@ -86,8 +114,9 @@ func (s *DownloadService) GetAllAccountIDs() []string {
 
 	personalAccounts := os.Getenv("ETC_PERSONAL_ACCOUNTS")
 	if personalAccounts != "" {
-		for _, accountStr := range strings.Split(personalAccounts, ",") {
-			parts := strings.Split(accountStr, ":")
+		accounts := parseAccountsString(personalAccounts)
+		for _, accountStr := range accounts {
+			parts := strings.Split(strings.TrimSpace(accountStr), ":")
 			if len(parts) >= 1 {
 				accountIDs = append(accountIDs, parts[0])
 			}
