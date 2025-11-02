@@ -29,6 +29,14 @@ func main() {
 		return
 	}
 
+	// 環境変数を優先
+	if envPort := os.Getenv("GRPC_PORT"); envPort != "" {
+		grpcPort = &envPort
+	}
+	if envPort := os.Getenv("HTTP_PORT"); envPort != "" {
+		httpPort = &envPort
+	}
+
 	// ロガー設定
 	logger := log.New(os.Stdout, "[ETC-MEISAI] ", log.LstdFlags)
 

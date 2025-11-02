@@ -131,6 +131,10 @@ db_service (Fiber):
 - `ETC_HEADLESS`: Headlessモード（デフォルト: true）
   - `true` または未設定: Headlessモード（ブラウザ非表示）
   - `false`: ブラウザ表示モード（デバッグ用）
+- `GRPC_PORT`: gRPCサーバーポート（デフォルト: 50052）
+  - コマンドラインフラグ`--grpc-port`より優先
+- `HTTP_PORT`: HTTPサーバーポート（デフォルト: 8080）
+  - レガシーモード用
 
 **レガシー環境変数**（後方互換性のため残存）:
 - `ETC_CORPORATE_ACCOUNTS`: 法人アカウント（カンマ区切り）
